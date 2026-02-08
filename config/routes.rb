@@ -14,6 +14,36 @@ Rails.application.routes.draw do
         post :logout
         get :me
       end
+
+      resources :customers do
+        member do
+          get :devices
+          get :repair_tickets
+        end
+      end
+
+      resources :devices
+
+      resources :repair_tickets do
+        member do
+          post :update_status
+          get :timeline
+          get :payments
+        end
+        collection do
+          get :kanban
+        end
+      end
+
+      resources :payments, only: [:index, :show, :create]
+      resources :activity_logs, only: [:index, :show]
+      resources :users, only: [:index, :show, :create, :update]
+
+      namespace :pos do
+        post :create_invoice
+        post :process_payment
+        get 'receipt/:id', action: :receipt
+      end
     end
   end
 

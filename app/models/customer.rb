@@ -25,6 +25,10 @@ class Customer < ApplicationRecord
     update(deleted_at: Time.current)
   end
 
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
   private
 
   def email_or_phone_present
