@@ -6,6 +6,7 @@ class User < ApplicationRecord
   # Associations
   has_many :repair_tickets, foreign_key: :assigned_technician_id, dependent: :nullify
   has_many :activity_logs, dependent: :destroy
+  has_many :refresh_tokens, dependent: :destroy
 
   # Validations
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
