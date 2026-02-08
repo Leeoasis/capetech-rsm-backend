@@ -1,5 +1,10 @@
 class ApplicationController < ActionController::API
+  include Pundit::Authorization
+
   before_action :authenticate_user!, unless: :skip_authentication?
+  after_action :verify_authorized, unless: :skip_authorization?
+
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   attr_reader :current_user
 
@@ -33,5 +38,18 @@ class ApplicationController < ActionController::API
 
   def skip_authentication?
     false
+  end
+
+  def skip_authorization?
+    skip_authentication?
+  end
+
+  def user_not_authorized
+    render json: {
+      error: {
+        message: 'You are not authorized to perform this action',
+        details: {}
+      }
+    }, status: :forbidden
   end
 end

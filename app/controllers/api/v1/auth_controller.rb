@@ -94,6 +94,10 @@ module Api
       def skip_authentication?
         action_name == 'login' || action_name == 'refresh'
       end
+
+      def skip_authorization?
+        true
+      end
     end
   end
 end
