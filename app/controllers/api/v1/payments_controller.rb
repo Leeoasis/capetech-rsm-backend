@@ -23,7 +23,7 @@ module Api
           payments: @payments.as_json(
             include: {
               repair_ticket: { 
-                only: [:id, :ticket_number, :quoted_price],
+                only: [:id, :ticket_number, :estimated_cost],
                 include: {
                   customer: { only: [:id, :first_name, :last_name], methods: [:full_name] }
                 }
@@ -41,7 +41,7 @@ module Api
           payment: @payment.as_json(
             include: {
               repair_ticket: {
-                only: [:id, :ticket_number, :quoted_price, :actual_price],
+                only: [:id, :ticket_number, :estimated_cost, :actual_cost],
                 include: {
                   customer: { only: [:id, :first_name, :last_name, :phone, :email], methods: [:full_name] },
                   device: { only: [:id, :device_type, :brand, :model] }
@@ -59,8 +59,8 @@ module Api
         # Validate payment amount
         ticket = RepairTicket.find(payment_params[:repair_ticket_id])
         total_paid = ticket.payments.sum(:amount)
-        quoted_price = ticket.quoted_price || 0
-        balance = quoted_price - total_paid
+        estimated_cost = ticket.estimated_cost || 0
+        balance = estimated_cost - total_paid
         
         if @payment.amount > balance
           return render_error(

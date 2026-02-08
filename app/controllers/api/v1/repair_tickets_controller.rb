@@ -138,7 +138,7 @@ module Api
           # Create repair status record
           RepairStatus.create!(
             repair_ticket: @ticket,
-            user: current_user,
+            changed_by_user_id: current_user.id,
             status: new_status,
             notes: notes
           )
@@ -189,12 +189,12 @@ module Api
         
         @payments = @ticket.payments.order(created_at: :desc)
         total_paid = @payments.sum(:amount)
-        balance = (@ticket.quoted_price || 0) - total_paid
+        balance = (@ticket.estimated_cost || 0) - total_paid
         
         render json: {
           payments: @payments,
           summary: {
-            quoted_price: @ticket.quoted_price,
+            estimated_cost: @ticket.estimated_cost,
             total_paid: total_paid,
             balance: balance
           }
@@ -234,7 +234,7 @@ module Api
       def repair_ticket_params
         params.require(:repair_ticket).permit(
           :customer_id, :device_id, :assigned_technician_id, :fault_description,
-          :diagnosis, :repair_notes, :priority, :quoted_price, :actual_price,
+          :accessories_received, :priority, :estimated_cost, :actual_cost,
           :estimated_completion, :completed_at, :collected_at
         )
       end

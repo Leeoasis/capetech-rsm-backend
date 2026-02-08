@@ -109,13 +109,8 @@ module Api
 
       def customer_params
         params.require(:customer).permit(
-          :first_name, :last_name, :email, :phone, :address, :city, 
-          :state, :zip_code, :notes, :active
+          :first_name, :last_name, :email, :phone, :address, :id_number, :active
         )
-      end
-
-      def full_name
-        "#{first_name} #{last_name}"
       end
     end
   end

@@ -18,11 +18,10 @@ module Api
               customer: customer,
               device: device,
               fault_description: params[:fault_description],
-              diagnosis: params[:diagnosis],
-              repair_notes: params[:repair_notes],
+              accessories_received: params[:accessories_received],
               priority: params[:priority] || 'medium',
-              quoted_price: total,
-              actual_price: total,
+              estimated_cost: total,
+              actual_cost: total,
               status: :pending
             )
             
@@ -67,8 +66,8 @@ module Api
           
           # Calculate current balance
           total_paid = ticket.payments.sum(:amount)
-          quoted_price = ticket.quoted_price || 0
-          balance = quoted_price - total_paid
+          estimated_cost = ticket.estimated_cost || 0
+          balance = estimated_cost - total_paid
           
           if amount > balance
             return render_error(
@@ -133,7 +132,7 @@ module Api
           ticket = payment.repair_ticket
           
           total_paid = ticket.payments.where('id <= ?', payment.id).sum(:amount)
-          balance = (ticket.quoted_price || 0) - total_paid
+          balance = (ticket.estimated_cost || 0) - total_paid
           
           receipt_data = generate_receipt_data(ticket, payment, balance)
           
@@ -165,13 +164,13 @@ module Api
               reference: payment.reference_number
             },
             financial: {
-              quoted_price: ticket.quoted_price,
+              estimated_cost: ticket.estimated_cost,
               total_paid: ticket.payments.sum(:amount),
               balance: balance,
               status: balance <= 0 ? 'Paid in Full' : 'Partial Payment'
             },
             fault_description: ticket.fault_description,
-            diagnosis: ticket.diagnosis
+            accessories_received: ticket.accessories_received
           }
         end
       end

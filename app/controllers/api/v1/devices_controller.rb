@@ -93,7 +93,7 @@ module Api
       def device_params
         params.require(:device).permit(
           :customer_id, :device_type, :brand, :model, :serial_number,
-          :imei, :password, :pattern, :notes
+          :imei, :password_pin, :notes
         )
       end
     end
